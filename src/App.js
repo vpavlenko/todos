@@ -20,18 +20,20 @@ class App extends Component {
   render() {
     return (
       <MuiThemeProvider>
-      <div className="App" style={{width: 500, left: 500, position: "absolute"}}>
+      <div className="App" style={{width: "50%", marginLeft:"25%", position: "absolute"}}>
         {
           this.state.list.map(
-            (item, index) => <div style={{display: 'flex', flexDirection: 'row'}}>
+            (item, index) => <div style={{display: 'flex', flexDirection: 'row', marginTop: 8}}>
               <Checkbox
                 label={item.text}
                 style={
                   item.is_finished ? {
                     textDecoration: "line-through",
-                    marginBottom: 16,
-                    width: "80%"
-                  }: {marginBottom: 16, width: "80%"}
+                    width: "80%",
+                    verticalAlign: "middle",
+                    textAlign: 'left',
+                    marginTop: 8,
+                  }: {width: "80%", verticalAlign: "middle", marginTop: 8, textAlign: 'left'}
                 }
                 onClick={() => this.setState({list: this.state.list.map(
                   (itemf, indexf) => indexf !== index ? itemf : {
@@ -41,7 +43,7 @@ class App extends Component {
                 )})}
               />
               <FloatingActionButton 
-                style={{marginLeft: 20}}
+                style={{marginLeft: 34}}
                 mini={true}
                 secondary={true}
                 onClick={
@@ -55,19 +57,23 @@ class App extends Component {
             </div>
           )
         }
-        <div>
+        <div style={{marginTop: 8}}>
           <TextField
             hintText="Wtite your task here"
             onChange={(evt) => this.setState({value: evt.target.value})}
             style={{width: "80%"}}
+            value={this.state.value}
           />
           <FloatingActionButton 
             style={{marginRight: 20}}
             mini={true}
             onClick={() => this.setState(
-              { list: this.state.list.concat(
-                {text: this.state.value, is_finished: false}
-              )}
+              { 
+                list: this.state.list.concat(
+                  {text: this.state.value, is_finished: false}
+                ),
+                value: ''
+              }
             )}
           >
             <ContentAdd />
