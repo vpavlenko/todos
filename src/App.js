@@ -26,17 +26,19 @@ class App extends Component {
     } 
   }
   saveTask() {
-    this.setState(
-      { 
-        list: this.state.list.concat(
-          {
-            text: this.state.value,
-            is_finished: false
-          }
-        ),
-        value: ''
-      }
-    );
+    if (this.state.value !== '') {
+      this.setState(
+        { 
+          list: this.state.list.concat(
+            {
+              text: this.state.value,
+              is_finished: false
+            }
+          ),
+          value: ''
+        }
+      );
+    }
   }
   render() {
     return (
@@ -47,14 +49,16 @@ class App extends Component {
             (item, index) => <div style={{display: 'flex', flexDirection: 'row', marginTop: 8}}>
               <Checkbox
                 label={item.text}
-                style={
-                  item.is_finished ? {
-                    textDecoration: "line-through",
+                style={{
                     width: "80%",
                     verticalAlign: "middle",
                     textAlign: 'left',
                     marginTop: 8,
-                  }: {width: "80%", verticalAlign: "middle", marginTop: 8, textAlign: 'left'}
+                }}
+                labelStyle={
+                  item.is_finished ? 
+                  {color: "grey", textDecoration: "line-through"} : 
+                  {}
                 }
                 onClick={() => this.setState({list: this.state.list.map(
                   (itemf, indexf) => indexf !== index ? itemf : {
@@ -64,7 +68,7 @@ class App extends Component {
                 )})}
               />
               <FloatingActionButton 
-                style={{marginLeft: 34}}
+                style={{marginLeft: 34, height: 40}}
                 mini={true}
                 secondary={true}
                 onClick={
