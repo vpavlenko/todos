@@ -7,7 +7,6 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentRemove from 'material-ui/svg-icons/content/remove';
 import Checkbox from 'material-ui/Checkbox';
-import ClickOutside from 'react-click-outside'
 
 
 class App extends Component {
