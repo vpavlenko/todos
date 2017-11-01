@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 import TextField from 'material-ui/TextField';
@@ -8,20 +7,6 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentRemove from 'material-ui/svg-icons/content/remove';
 import Checkbox from 'material-ui/Checkbox';
-import ActionFavorite from 'material-ui/svg-icons/action/favorite';
-import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
-import Visibility from 'material-ui/svg-icons/action/visibility';
-import VisibilityOff from 'material-ui/svg-icons/action/visibility-off'
-
-
-const TextFieldExampleSimple = () => (
-  <div>
-    <TextField
-      hintText="Hint Text"
-      onChange={(evt) => this.setState({value: evt.target.value})}
-    /><br />
-  </div>
-);
 
 
 class App extends Component {
