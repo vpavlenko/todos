@@ -7,19 +7,22 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentRemove from 'material-ui/svg-icons/content/remove';
 import Checkbox from 'material-ui/Checkbox';
+import ClickOutside from 'react-click-outside'
 
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      list: [{"text": "test sample", "is_finished": false}],
+      list: [{"text": "test sample", "is_finished": false, edited: false}],
       value: "",
     }
     this.saveTask = this.saveTask.bind(this)
-    this._onKeyPress = this._onKeyPress.bind(this)
+    this._onKeyPressAdd = this._onKeyPressAdd.bind(this)
+    this.changeTask = this.changeTask.bind(this)
+    this._onKeyPressChange = this._onKeyPressChange.bind(this)
   }
-  _onKeyPress(event) {
+  _onKeyPressAdd(event) {
     if (event.charCode === 13) { // enter key pressed
       this.saveTask();
       // do something here
@@ -32,7 +35,8 @@ class App extends Component {
           list: this.state.list.concat(
             {
               text: this.state.value,
-              is_finished: false
+              is_finished: false,
+              edited: false
             }
           ),
           value: ''
@@ -40,32 +44,109 @@ class App extends Component {
       );
     }
   }
+  _onKeyPressChange(event, item, index) {
+    if (event.charCode === 13) { // enter key pressed
+      this.changeTask(item, index);
+      // do something here
+    } 
+  }
+  changeTask(item, index) {
+    this.setState(
+      {
+        list: this.state.list.map(
+          (itemf, indexf) => indexf !== index ? itemf : {
+            text: item.text,
+            is_finished: item.is_finished,
+            edited: item.edited
+          }
+        )
+      }
+    )
+  }
+  makeTaskStyle(item, is_textedit=false) {
+    var res = {
+      display: is_textedit ?  "None": "inline-block",
+      width: "73.6%",
+      verticalAlign: "middle",
+    };
+    if (item.is_finished) {
+      res.color = "grey";
+      res.textDecoration = "line-through";
+    };
+    if (item.edited) {
+      res.display = is_textedit ?  "inline-block" : "None";
+      res.height = "auto";
+    } else {
+      res.display = is_textedit ?  "None": "inline-block";
+      res.marginTop = 8;
+      res.paddingTop = 3;
+    };
+    return res
+  }
   render() {
     return (
       <MuiThemeProvider>
       <div className="App" style={{width: "50%", marginLeft:"25%", position: "absolute"}}>
         {
           this.state.list.map(
-            (item, index) => <div style={{display: 'flex', flexDirection: 'row', marginTop: 8}}>
+            (item, index) => <div style={
+              {
+                display: 'flex',
+                flexDirection: 'row',
+                marginTop: 8,
+                verticalAlign: "middle",
+                textAlign: 'left'
+              }
+            }>
               <Checkbox
-                label={item.text}
                 style={{
-                    width: "80%",
+                    width: "5%",
                     verticalAlign: "middle",
                     textAlign: 'left',
                     marginTop: 8,
                 }}
-                labelStyle={
-                  item.is_finished ? 
-                  {color: "grey", textDecoration: "line-through"} : 
-                  {}
-                }
-                onClick={() => this.setState({list: this.state.list.map(
-                  (itemf, indexf) => indexf !== index ? itemf : {
-                    "text": itemf.text,
-                    "is_finished": !itemf.is_finished
-                  }
-                )})}
+                onClick={() => this.changeTask(
+                  {
+                    text: item.text,
+                    is_finished: !item.is_finished,
+                    edited: item.edited
+                  },
+                  index
+                )}
+              />
+              <div
+                style={this.makeTaskStyle(item)}
+                onDoubleClick={() => this.changeTask(
+                  {
+                    text: item.text,
+                    is_finished: item.is_finished,
+                    edited: true
+                  },
+                  index
+                )}
+              >
+                {item.text}
+              </div>
+              <TextField 
+                style={this.makeTaskStyle(item, true)}
+                value={item.text}
+                onChange={(evt) => this.changeTask(
+                  {
+                    text: evt.target.value,
+                    is_finished: item.is_finished,
+                    edited: item.edited
+                  },
+                  index
+                )}
+                onKeyPress={(evt) => this._onKeyPressChange(
+                  evt,
+                  {
+                    text: item.text,
+                    is_finished: item.is_finished,
+                    edited: false
+                  },
+                  index
+                )}
               />
               <FloatingActionButton 
                 style={{marginLeft: 34, height: 40}}
@@ -89,7 +170,7 @@ class App extends Component {
             
             style={{width: "80%"}}
             value={this.state.value}
-            onKeyPress={this._onKeyPress}
+            onKeyPress={this._onKeyPressAdd}
           />
           <FloatingActionButton 
             style={{marginRight: 20}}
