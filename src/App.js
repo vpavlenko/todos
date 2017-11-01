@@ -16,6 +16,27 @@ class App extends Component {
       list: [{"text": "test sample", "is_finished": false}],
       value: "",
     }
+    this.saveTask = this.saveTask.bind(this)
+    this._onKeyPress = this._onKeyPress.bind(this)
+  }
+  _onKeyPress(event) {
+    if (event.charCode === 13) { // enter key pressed
+      this.saveTask();
+      // do something here
+    } 
+  }
+  saveTask() {
+    this.setState(
+      { 
+        list: this.state.list.concat(
+          {
+            text: this.state.value,
+            is_finished: false
+          }
+        ),
+        value: ''
+      }
+    );
   }
   render() {
     return (
@@ -61,20 +82,15 @@ class App extends Component {
           <TextField
             hintText="Wtite your task here"
             onChange={(evt) => this.setState({value: evt.target.value})}
+            
             style={{width: "80%"}}
             value={this.state.value}
+            onKeyPress={this._onKeyPress}
           />
           <FloatingActionButton 
             style={{marginRight: 20}}
             mini={true}
-            onClick={() => this.setState(
-              { 
-                list: this.state.list.concat(
-                  {text: this.state.value, is_finished: false}
-                ),
-                value: ''
-              }
-            )}
+            onClick={this.saveTask}
           >
             <ContentAdd />
           </FloatingActionButton>
