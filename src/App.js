@@ -13,19 +13,29 @@ import Toggle from 'material-ui/Toggle';
 class App extends Component {
   constructor(props) {
     super(props);
+    var state = localStorage.getItem("state");
+    if (!state) {
     this.state = {
-      list: [{"text": "test sample", "is_finished": false, edited: false}],
-      task_value: "",
-      filter: {
-        complited: true,
-        active: true
-      },
-      search_value: ""
+        list: [{"text": "test sample", "is_finished": false, edited: false}],
+        task_value: "",
+        filter: {
+          complited: true,
+          active: true
+        },
+        search_value: ""
+      }
+    } else {
+      this.state = JSON.parse(state)
     }
     this.saveTask = this.saveTask.bind(this)
     this._onKeyPressAdd = this._onKeyPressAdd.bind(this)
     this.changeTask = this.changeTask.bind(this)
     this._onKeyPressChange = this._onKeyPressChange.bind(this)
+    this.setOnResult = this.setOnResult.bind(this)
+  }
+  setOnResult(item) {
+    this.setState(item);
+    localStorage.setItem("state", JSON.stringify(this.state))
   }
   _onKeyPressAdd(event) {
     if (event.charCode === 13) { // enter key pressed
@@ -35,7 +45,7 @@ class App extends Component {
   }
   saveTask() {
     if (this.state.value !== '') {
-      this.setState(
+      this.setOnResult(
         { 
           list: this.state.list.concat(
             {
@@ -56,7 +66,7 @@ class App extends Component {
     } 
   }
   changeTask(item, index) {
-    this.setState(
+    this.setOnResult(
       {
         list: this.state.list.map(
           (itemf, indexf) => indexf !== index ? itemf : {
@@ -105,7 +115,7 @@ class App extends Component {
                   onClick={() => {
                       const filter = this.state.filter;
                       filter[key] = !filter[key];
-                      this.setState({filter: filter});
+                      this.setOnResult({filter: filter});
                       return
                     }
                   }
@@ -114,7 +124,7 @@ class App extends Component {
           }
           <TextField
             hintText="Search"
-            onChange={(evt) => this.setState({search_value: evt.target.value})}
+            onChange={(evt) => this.setOnResult({search_value: evt.target.value})}
             
             style={{width: "20%"}}
             value={this.state.search_value}
@@ -123,7 +133,7 @@ class App extends Component {
         <div style={{marginTop: 8}}>
           <TextField
             hintText="Write your task here"
-            onChange={(evt) => this.setState({task_value: evt.target.value})}
+            onChange={(evt) => this.setOnResult({task_value: evt.target.value})}
             
             style={{width: "80%"}}
             value={this.state.task_value}
@@ -216,7 +226,7 @@ class App extends Component {
                 mini={true}
                 secondary={true}
                 onClick={
-                  () => this.setState({list: this.state.list.filter(
+                  () => this.setOnResult({list: this.state.list.filter(
                     (e, i) => {return i !== index}
                   )})
                 }
