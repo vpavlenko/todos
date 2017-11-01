@@ -10,23 +10,34 @@ import Checkbox from 'material-ui/Checkbox';
 import Toggle from 'material-ui/Toggle';
 
 
+var state_keys = {
+  list: "array",
+  task_value: "string",
+  filter: "object",
+  search_value: "string"
+}
+
+
 class App extends Component {
   constructor(props) {
     super(props);
-    var state = localStorage.getItem("state");
-    if (!state) {
     this.state = {
-        list: [{"text": "test sample", "is_finished": false, edited: false}],
-        task_value: "",
-        filter: {
-          complited: true,
-          active: true
-        },
-        search_value: ""
+      list: [{"text": "test sample", "is_finished": false, edited: false}],
+      task_value: "",
+      filter: {
+        complited: true,
+        active: true
+      },
+      search_value: ""
+    };
+    Object.keys(state_keys).map(
+      (key) => {
+        var value = localStorage.getItem(key);
+        if (value) {
+            this.state[key] = JSON.parse(value);
+        }
       }
-    } else {
-      this.state = JSON.parse(state)
-    }
+    );
     this.saveTask = this.saveTask.bind(this)
     this._onKeyPressAdd = this._onKeyPressAdd.bind(this)
     this.changeTask = this.changeTask.bind(this)
@@ -35,7 +46,11 @@ class App extends Component {
   }
   setOnResult(item) {
     this.setState(item);
-    localStorage.setItem("state", JSON.stringify(this.state))
+    Object.keys(item).map(
+      (key) => {
+        localStorage.setItem(key, JSON.stringify(item[key]))
+      }
+    )
   }
   _onKeyPressAdd(event) {
     if (event.charCode === 13) { // enter key pressed
@@ -44,7 +59,7 @@ class App extends Component {
     } 
   }
   saveTask() {
-    if (this.state.value !== '') {
+    if (this.state.task_value !== '') {
       this.setOnResult(
         { 
           list: this.state.list.concat(
@@ -133,8 +148,11 @@ class App extends Component {
         <div style={{marginTop: 8}}>
           <TextField
             hintText="Write your task here"
-            onChange={(evt) => this.setOnResult({task_value: evt.target.value})}
-            
+            onChange={(evt) => this.setOnResult(
+              {
+                task_value: evt.target.value.replace(/^\s+/, '').replace(/\s+$/, '')
+              }
+            )}  
             style={{width: "80%"}}
             value={this.state.task_value}
             onKeyPress={this._onKeyPressAdd}
