@@ -7,6 +7,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentRemove from 'material-ui/svg-icons/content/remove';
 import Checkbox from 'material-ui/Checkbox';
+import Toggle from 'material-ui/Toggle';
 
 
 class App extends Component {
@@ -14,7 +15,12 @@ class App extends Component {
     super(props);
     this.state = {
       list: [{"text": "test sample", "is_finished": false, edited: false}],
-      value: "",
+      task_value: "",
+      filter: {
+        complited: true,
+        active: true
+      },
+      search_value: ""
     }
     this.saveTask = this.saveTask.bind(this)
     this._onKeyPressAdd = this._onKeyPressAdd.bind(this)
@@ -33,12 +39,12 @@ class App extends Component {
         { 
           list: this.state.list.concat(
             {
-              text: this.state.value,
+              text: this.state.task_value,
               is_finished: false,
               edited: false
             }
           ),
-          value: ''
+          task_value: ''
         }
       );
     }
@@ -62,10 +68,11 @@ class App extends Component {
       }
     )
   }
+
   makeTaskStyle(item, is_textedit=false) {
     var res = {
       display: is_textedit ?  "None": "inline-block",
-      width: "73.6%",
+      width: "76.5%",
       verticalAlign: "middle",
     };
     if (item.is_finished) {
@@ -85,9 +92,65 @@ class App extends Component {
   render() {
     return (
       <MuiThemeProvider>
-      <div className="App" style={{width: "50%", marginLeft:"25%", position: "absolute"}}>
+      <div className="App" style={{width: "40%", marginLeft:"30%", position: "absolute"}}>
+        <div style={{marginTop: 8, textAlign: "left"}}>
+          {
+            Object.keys(this.state.filter).map(
+              (key) =>
+                <Toggle
+                  label={key}
+                  toggled={this.state.filter[key]}
+                  style={{width: "120px", display: "inline-block", marginRight: 40}}
+                  labelPosition="right"
+                  onClick={() => {
+                      const filter = this.state.filter;
+                      filter[key] = !filter[key];
+                      this.setState({filter: filter});
+                      return
+                    }
+                  }
+                />
+            )
+          }
+          <TextField
+            hintText="Search"
+            onChange={(evt) => this.setState({search_value: evt.target.value})}
+            
+            style={{width: "20%"}}
+            value={this.state.search_value}
+          />
+        </div>
+        <div style={{marginTop: 8}}>
+          <TextField
+            hintText="Write your task here"
+            onChange={(evt) => this.setState({task_value: evt.target.value})}
+            
+            style={{width: "80%"}}
+            value={this.state.task_value}
+            onKeyPress={this._onKeyPressAdd}
+          />
+          <FloatingActionButton 
+            style={{marginRight: 20}}
+            mini={true}
+            onClick={this.saveTask}
+          >
+            <ContentAdd />
+          </FloatingActionButton>
+        </div>
         {
-          this.state.list.map(
+          this.state.list.filter(
+            (item) => {
+              return (
+                this.state.filter.complited && item.is_finished
+              ) || (
+                this.state.filter.active && !item.is_finished
+              ) && (
+                this.state.search_value == "" || !item.text.indexOf(
+                  this.state.search_value
+                )
+              )
+            }
+          ).map(
             (item, index) => <div style={
               {
                 display: 'flex',
@@ -104,6 +167,7 @@ class App extends Component {
                     textAlign: 'left',
                     marginTop: 8,
                 }}
+                checked={item.is_finished}
                 onClick={() => this.changeTask(
                   {
                     text: item.text,
@@ -148,7 +212,7 @@ class App extends Component {
                 )}
               />
               <FloatingActionButton 
-                style={{marginLeft: 34, height: 40}}
+                style={{marginLeft: "", height: 40}}
                 mini={true}
                 secondary={true}
                 onClick={
@@ -162,23 +226,6 @@ class App extends Component {
             </div>
           )
         }
-        <div style={{marginTop: 8}}>
-          <TextField
-            hintText="Wtite your task here"
-            onChange={(evt) => this.setState({value: evt.target.value})}
-            
-            style={{width: "80%"}}
-            value={this.state.value}
-            onKeyPress={this._onKeyPressAdd}
-          />
-          <FloatingActionButton 
-            style={{marginRight: 20}}
-            mini={true}
-            onClick={this.saveTask}
-          >
-            <ContentAdd />
-          </FloatingActionButton>
-        </div>
       </div>
       </MuiThemeProvider>
     );

@@ -9,6 +9,7 @@
     "react": "^16.0.0",
     "react-click-outside": "github:tj/react-click-outside",
     "react-dom": "^16.0.0",
+    "react-onclickoutside": "^6.6.3",
     "react-scripts": "^1.0.14"
   },
   "scripts": {
