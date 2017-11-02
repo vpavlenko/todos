@@ -8,6 +8,7 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentRemove from 'material-ui/svg-icons/content/remove';
 import Checkbox from 'material-ui/Checkbox';
 import Toggle from 'material-ui/Toggle';
+import { Draggable, Droppable } from 'react-drag-and-drop';
 
 
 var state_keys = {
@@ -59,12 +60,12 @@ class App extends Component {
     } 
   }
   saveTask() {
-    if (this.state.task_value !== '') {
+    if (this.state.task_value.replace(/^\s+/, '').replace(/\s+$/, '') !== '') {
       this.setOnResult(
         { 
           list: this.state.list.concat(
             {
-              text: this.state.task_value,
+              text: this.state.task_value.replace(/^\s+/, '').replace(/\s+$/, ''),
               is_finished: false,
               edited: false
             }
@@ -117,7 +118,7 @@ class App extends Component {
   render() {
     return (
       <MuiThemeProvider>
-      <div className="App" style={{width: "40%", marginLeft:"30%", position: "absolute"}}>
+      <div className="App" style={{width: "512px", marginLeft:"30%", position: "absolute"}}>
         <div style={{marginTop: 8, textAlign: "left"}}>
           {
             Object.keys(this.state.filter).map(
@@ -150,7 +151,7 @@ class App extends Component {
             hintText="Write your task here"
             onChange={(evt) => this.setOnResult(
               {
-                task_value: evt.target.value.replace(/^\s+/, '').replace(/\s+$/, '')
+                task_value: evt.target.value
               }
             )}  
             style={{width: "80%"}}
@@ -179,7 +180,7 @@ class App extends Component {
               )
             }
           ).map(
-            (item, index) => <div style={
+            (item, index) => <Draggable type="fruit" data="banana"><div style={
               {
                 display: 'flex',
                 flexDirection: 'row',
@@ -251,10 +252,15 @@ class App extends Component {
               >
                 <ContentRemove />
               </FloatingActionButton>
-            </div>
+            </div></Draggable>
           )
         }
       </div>
+      <Droppable
+          types={['fruit']}
+      >
+          <ul className="Smoothie"></ul>
+      </Droppable>
       </MuiThemeProvider>
     );
   }
