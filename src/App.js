@@ -167,9 +167,8 @@ class App extends Component {
           </FloatingActionButton>
         </div>
         {
-          this.state.list.filter(
-            (item) => {
-              return ((
+          this.state.list.map(
+            (item, index) => ((
                 this.state.filter.complited && item.is_finished
               ) || (
                 this.state.filter.active && !item.is_finished
@@ -177,10 +176,7 @@ class App extends Component {
                 this.state.search_value == "" || !item.text.indexOf(
                   this.state.search_value
                 )
-              )
-            }
-          ).map(
-            (item, index) => <Draggable type="fruit" data="banana"><div style={
+              ) ? <Draggable type="fruit" data="banana"><div style={
               {
                 display: 'flex',
                 flexDirection: 'row',
@@ -252,7 +248,7 @@ class App extends Component {
               >
                 <ContentRemove />
               </FloatingActionButton>
-            </div></Draggable>
+            </div></Draggable> : ''
           )
         }
       </div>
