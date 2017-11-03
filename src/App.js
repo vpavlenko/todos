@@ -169,11 +169,11 @@ class App extends Component {
         {
           this.state.list.filter(
             (item) => {
-              return (
+              return ((
                 this.state.filter.complited && item.is_finished
               ) || (
                 this.state.filter.active && !item.is_finished
-              ) && (
+              )) && (
                 this.state.search_value == "" || !item.text.indexOf(
                   this.state.search_value
                 )
